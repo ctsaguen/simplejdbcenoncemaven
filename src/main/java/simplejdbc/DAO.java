@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,8 +143,8 @@ public class DAO {
 	 * @throws DAOException
 	 */
 	List<CustomerEntity> customersInState(String state) throws DAOException {
-		CustomerEntity c =null;
-                List<CustomerEntity> liste
+		 
+                LinkedList<CustomerEntity> listeUSA = new LinkedList<>();
 		String sql = "SELECT * FROM CUSTOMER WHERE STATE = ?";
                 
                 		try (   Connection connection = myDataSource.getConnection();
@@ -152,14 +153,13 @@ public class DAO {
                         // Définir la valeur du paramètre
 			stmt.setString(1, state);
                         ResultSet rs = stmt.executeQuery();
-                        
-                       if (rs.next()) { // Pas la peine de faire while, il y a 1 seul enregistrement
-				// On récupère le champ NUMBER de l'enregistrement courant
-			c = new CustomerEntity(rs.getInt("CUSTOMER_ID"), rs.getString("NAME"),rs.getString("ADDRESSLINE1"));
-                        
-			}
+                    
+                    while(rs.next())  { 
+                         CustomerEntity   c = new CustomerEntity(rs.getInt("CUSTOMER_ID"), rs.getString("NAME"),rs.getString("ADDRESSLINE1"));
+                            listeUSA.add(c);
+                            }
 			
-			return c;
+			return listeUSA;
 
 		}  catch (SQLException ex) {
 			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
